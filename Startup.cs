@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 
 namespace AspNetCoreVerifiableCredentials
 {
@@ -75,7 +77,12 @@ namespace AspNetCoreVerifiableCredentials
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                       Path.Combine(env.ContentRootPath, ".well-known")),
+                RequestPath = "/StaticFiles"
+            });
             app.UseRouting();
             app.UseSession();
             app.UseCors("MyPolicy");

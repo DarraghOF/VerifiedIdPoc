@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AspNetCoreVerifiableCredentials")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e37c207c3808958deba845ab406d4a8f49fdd175")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b74c15c2b6463d172142c9ab8c0167aa7faf3abf")]
 [assembly: System.Reflection.AssemblyProductAttribute("AspNetCoreVerifiableCredentials")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AspNetCoreVerifiableCredentials")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
