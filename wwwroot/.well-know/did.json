@@ -1,0 +1,48 @@
+{
+  "id": "did:web:verifiedidweb.azurewebsites.net",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:verifiedidweb.azurewebsites.net"
+    }
+  ],
+  "service": [
+    {
+      "id": "#linkeddomains",
+      "type": "LinkedDomains",
+      "serviceEndpoint": {
+        "origins": [
+          "https://verifiedidweb.azurewebsites.net/"
+        ]
+      }
+    },
+    {
+      "id": "#hub",
+      "type": "IdentityHub",
+      "serviceEndpoint": {
+        "instances": [
+          "https://hub.did.msidentity.com/v1.0/ee0ba6ca-c971-4429-a1e5-16bc27c94448"
+        ]
+      }
+    }
+  ],
+  "verificationMethod": [
+    {
+      "id": "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9",
+      "controller": "did:web:verifiedidweb.azurewebsites.net",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "crv": "P-256",
+        "kty": "EC",
+        "x": "oS5HFcLt-4ZTnp8DA4vVHoN1Dx64sJDO5JlxtvbLikc",
+        "y": "jTDVM5z1bglHQKIBr2JQjqgLsqibz2PNctX4LACTwJQ"
+      }
+    }
+  ],
+  "authentication": [
+    "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9"
+  ],
+  "assertionMethod": [
+    "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9"
+  ]
+}
