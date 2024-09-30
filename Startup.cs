@@ -78,6 +78,10 @@ namespace AspNetCoreVerifiableCredentials
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseFileServer(new FileServerOptions
+            {
+                EnableDirectoryBrowsing = true,
+            });
             app.UseRouting();
             app.UseSession();
             app.UseCors("MyPolicy");
