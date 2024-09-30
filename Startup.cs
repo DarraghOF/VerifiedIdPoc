@@ -77,11 +77,7 @@ namespace AspNetCoreVerifiableCredentials
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, ".well-known")),
-                RequestPath = "/.well-known"
-            });
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseSession();
             app.UseCors("MyPolicy");
