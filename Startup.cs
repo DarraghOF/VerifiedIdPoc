@@ -77,7 +77,13 @@ namespace AspNetCoreVerifiableCredentials
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(); // <-- don't forget this
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot/.well-known")),
+                RequestPath = new PathString("/.well-known"),
+                ServeUnknownFileTypes = true
+            });
             app.UseFileServer(new FileServerOptions
             {
                 EnableDirectoryBrowsing = true,
