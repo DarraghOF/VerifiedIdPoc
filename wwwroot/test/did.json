@@ -1,0 +1,48 @@
+{
+  "id": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net"
+    }
+  ],
+  "service": [
+    {
+      "id": "#linkeddomains",
+      "type": "LinkedDomains",
+      "serviceEndpoint": {
+        "origins": [
+          "https://repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net/"
+        ]
+      }
+    },
+    {
+      "id": "#hub",
+      "type": "IdentityHub",
+      "serviceEndpoint": {
+        "instances": [
+          "https://hub.did.msidentity.com/v1.0/ee0ba6ca-c971-4429-a1e5-16bc27c94448"
+        ]
+      }
+    }
+  ],
+  "verificationMethod": [
+    {
+      "id": "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7",
+      "controller": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "crv": "P-256",
+        "kty": "EC",
+        "x": "jm_VtRY2fnLuBSSjxIocrC3LJbWYrd-MwIRpziaYNQk",
+        "y": "-G7NdT6eod5R-w_5_zqAM8n_6GVH4ZYwLcpqiO58vg8"
+      }
+    }
+  ],
+  "authentication": [
+    "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7"
+  ],
+  "assertionMethod": [
+    "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7"
+  ]
+}
