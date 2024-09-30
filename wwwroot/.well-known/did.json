@@ -1,9 +1,9 @@
 {
-  "id": "did:web:verifiedidweb.azurewebsites.net",
+  "id": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net",
   "@context": [
     "https://www.w3.org/ns/did/v1",
     {
-      "@base": "did:web:verifiedidweb.azurewebsites.net"
+      "@base": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net"
     }
   ],
   "service": [
@@ -12,7 +12,7 @@
       "type": "LinkedDomains",
       "serviceEndpoint": {
         "origins": [
-          "https://verifiedidweb.azurewebsites.net/"
+          "https://repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net/"
         ]
       }
     },
@@ -28,21 +28,21 @@
   ],
   "verificationMethod": [
     {
-      "id": "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9",
-      "controller": "did:web:verifiedidweb.azurewebsites.net",
+      "id": "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7",
+      "controller": "did:web:repmap-verifiedidpoc-a9cfg6a4ata8fmbp.westeurope-01.azurewebsites.net",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
         "crv": "P-256",
         "kty": "EC",
-        "x": "oS5HFcLt-4ZTnp8DA4vVHoN1Dx64sJDO5JlxtvbLikc",
-        "y": "jTDVM5z1bglHQKIBr2JQjqgLsqibz2PNctX4LACTwJQ"
+        "x": "jm_VtRY2fnLuBSSjxIocrC3LJbWYrd-MwIRpziaYNQk",
+        "y": "-G7NdT6eod5R-w_5_zqAM8n_6GVH4ZYwLcpqiO58vg8"
       }
     }
   ],
   "authentication": [
-    "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9"
+    "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7"
   ],
   "assertionMethod": [
-    "#21a312254f8744e3a7ac59ea8629f24fvcSigningKey-94ea9"
+    "#f7ad5cf0ecab43798cce3eb3715aeab6vcSigningKey-3ffd7"
   ]
 }
