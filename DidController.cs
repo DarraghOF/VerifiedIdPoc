@@ -26,4 +26,5 @@ namespace AspNetCoreVerifiableCredentials
     public class Data
     {
         public bool Success { get; set; }
+    }
 }
