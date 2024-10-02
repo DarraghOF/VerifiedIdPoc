@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.IO;
 
 namespace AspNetCoreVerifiableCredentials
 {
@@ -35,7 +33,7 @@ namespace AspNetCoreVerifiableCredentials
                 builder.AllowAnyOrigin()
                        .AllowAnyMethod()
                        .AllowAnyHeader();
-                    // .WithOrigins("http://example.com","http://www.contoso.com");
+                // .WithOrigins("http://example.com","http://www.contoso.com");
             }));
 
             //services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
@@ -47,7 +45,7 @@ namespace AspNetCoreVerifiableCredentials
                 options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   
                 options.Cookie.IsEssential = true;
                 options.Cookie.HttpOnly = true;
-            } );
+            });
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -62,9 +60,10 @@ namespace AspNetCoreVerifiableCredentials
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseForwardedHeaders( new ForwardedHeadersOptions {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
                 ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
-            } );
+            });
 
             if (env.IsDevelopment())
             {

@@ -12,7 +12,7 @@ namespace AspNetCoreVerifiableCredentials
         [HttpGet("did.json")]
         public async Task<ActionResult> GetDid()
         {
-            string readText = System.IO.File.ReadAllText("./Resources/did.json");
+            string readText = await System.IO.File.ReadAllTextAsync("./Resources/did.json");
             return new ContentResult { ContentType = "application/json", Content = readText };
         }
 
@@ -20,7 +20,7 @@ namespace AspNetCoreVerifiableCredentials
         [HttpGet("did-configuration.json")]
         public async Task<ActionResult> GetDidConfiguration()
         {
-            string readText = System.IO.File.ReadAllText("./Resources/did-configuration.json");
+            string readText = await System.IO.File.ReadAllTextAsync("./Resources/did-configuration.json");
             return new ContentResult { ContentType = "application/json", Content = readText };
         }
     }
