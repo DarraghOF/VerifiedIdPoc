@@ -139,7 +139,7 @@ namespace AspNetCoreVerifiableCredentials
                     purpose = request.registration.purpose,
                     VerifierAuthority = request.authority,
                     type = request.requestedCredentials[0].type,
-                    acceptedIssuers = request.requestedCredentials[0].acceptedIssuers.ToArray(),
+                    // acceptedIssuers = request.requestedCredentials[0].acceptedIssuers.ToArray(),
                     PhotoClaimName = _configuration.GetValue("VerifiedID:PhotoClaimName", "")
                 };
                 return new ContentResult { ContentType = "application/json", Content = JsonConvert.SerializeObject(details) };
@@ -191,6 +191,7 @@ namespace AspNetCoreVerifiableCredentials
         /// <returns></returns>
         private PresentationRequest CreatePresentationRequest(string stateId = null, string credentialType = null, string[] acceptedIssuers = null)
         {
+            acceptedIssuers = null;
             PresentationRequest request = new PresentationRequest()
             {
                 includeQRCode = _configuration.GetValue("VerifiedID:includeQRCode", false),
@@ -217,15 +218,20 @@ namespace AspNetCoreVerifiableCredentials
             {
                 credentialType = _configuration["VerifiedID:CredentialType"];
             }
+
             List<string> okIssuers;
-            if (acceptedIssuers == null)
-            {
-                okIssuers = new List<string>(new string[] { _configuration["VerifiedID:DidAuthority"] });
-            }
-            else
-            {
-                okIssuers = new List<string>(acceptedIssuers);
-            }
+            acceptedIssuers = null;
+            okIssuers = new List<string>();
+            //List<string> okIssuers;
+            //if (acceptedIssuers == null)
+            //{
+            //    okIssuers = new List<string>(new string[] { _configuration["VerifiedID:DidAuthority"] });
+            //}
+            //else
+            //{
+            //    okIssuers = new List<string>(acceptedIssuers);
+            //}
+
             bool allowRevoked = _configuration.GetValue("VerifiedID:allowRevoked", false);
             bool validateLinkedDomain = _configuration.GetValue("VerifiedID:validateLinkedDomain", true);
             AddRequestedCredential(request, credentialType, okIssuers, allowRevoked, validateLinkedDomain);
@@ -239,7 +245,8 @@ namespace AspNetCoreVerifiableCredentials
             request.requestedCredentials.Add(new RequestedCredential()
             {
                 type = credentialType,
-                acceptedIssuers = (null == acceptedIssuers ? new List<string>() : acceptedIssuers),
+                // acceptedIssuers = (null == acceptedIssuers ? new List<string>() : acceptedIssuers),
+                acceptedIssuers = new List<string>(),
                 configuration = new Configuration()
                 {
                     validation = new Validation()
