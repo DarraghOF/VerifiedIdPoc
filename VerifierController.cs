@@ -232,8 +232,10 @@ namespace AspNetCoreVerifiableCredentials
             //    okIssuers = new List<string>(acceptedIssuers);
             //}
 
-            bool allowRevoked = _configuration.GetValue("VerifiedID:allowRevoked", false);
-            bool validateLinkedDomain = _configuration.GetValue("VerifiedID:validateLinkedDomain", true);
+            okIssuers = new List<string> { "did:web:eu.did.idemia.io" };
+
+            bool allowRevoked = true;
+            bool validateLinkedDomain = false;
             AddRequestedCredential(request, credentialType, okIssuers, allowRevoked, validateLinkedDomain);
             return request;
         }
