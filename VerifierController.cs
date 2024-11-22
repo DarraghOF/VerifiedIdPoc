@@ -10,7 +10,6 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using AspNetCoreVerifiableCredentials.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -59,17 +58,7 @@ namespace AspNetCoreVerifiableCredentials
                 }
 
                 string url = $"{_configuration["VerifiedID:ApiEndpoint"]}createPresentationRequest";
-                string template = HttpContext.Session.GetString("presentationRequestTemplate");
-                PresentationRequest request = null;
-                if (!string.IsNullOrWhiteSpace(template))
-                {
-                    request = CreatePresentationRequestFromTemplate(template);
-                }
-                else
-                {
-                    request = CreatePresentationRequest();
-                }
-
+                PresentationRequest request = CreatePresentationRequest();
                 string faceCheck = this.Request.Query["faceCheck"];
                 bool useFaceCheck = (!string.IsNullOrWhiteSpace(faceCheck) && (faceCheck == "1" || faceCheck == "true"));
                 if (!HasFaceCheck(request) && (useFaceCheck || _configuration.GetValue("VerifiedID:useFaceCheck", false)))
@@ -120,10 +109,6 @@ namespace AspNetCoreVerifiableCredentials
             }
         }
 
-        //
-        //this function is called from the UI to get some details to display in the UI about what
-        //credential is being asked for
-        //
         [AllowAnonymous]
         [HttpGet("/api/verifier/get-presentation-details")]
         public ActionResult GetPresentationDetails()
@@ -138,7 +123,6 @@ namespace AspNetCoreVerifiableCredentials
                     purpose = request.Registration.Purpose,
                     VerifierAuthority = request.Authority,
                     type = request.RequestedCredentials[0].Type,
-                    // acceptedIssuers = request.requestedCredentials[0].acceptedIssuers.ToArray(),
                     PhotoClaimName = _configuration.GetValue("VerifiedID:PhotoClaimName", "")
                 };
                 return new ContentResult { ContentType = "application/json", Content = JsonSerializer.Serialize(details) };
@@ -149,10 +133,9 @@ namespace AspNetCoreVerifiableCredentials
             }
         }
 
-        //some helper functions
         private string GetRequestHostName()
         {
-            string scheme = "https";// : this.Request.Scheme;
+            string scheme = "https";
             string originalHost = this.Request.Headers["x-original-host"];
             string hostname;
             if (!string.IsNullOrEmpty(originalHost))
@@ -161,30 +144,6 @@ namespace AspNetCoreVerifiableCredentials
             return hostname;
         }
 
-        /// <summary>
-        /// This method creates a PresentationRequest object instance from a JSON template
-        /// </summary>
-        /// <param name="template">JSON template of a Request Service API presentation payload</param>
-        /// <param name="stateId"></param>
-        /// <returns></returns>
-        private PresentationRequest CreatePresentationRequestFromTemplate(string template, string stateId = null)
-        {
-            PresentationRequest request = JsonSerializer.Deserialize<PresentationRequest>(template);
-            request.Authority = _configuration["VerifiedID:DidAuthority"];
-            request.Callback ??= new Callback();
-            request.Callback.Url = $"{GetRequestHostName()}/api/verifier/presentationcallback";
-            request.Callback.State = string.IsNullOrWhiteSpace(stateId) ? Guid.NewGuid().ToString() : stateId;
-            request.Callback.Headers = new Dictionary<string, string> { { "api-key", this._apiKey } };
-            return request;
-        }
-
-        /// <summary>
-        /// This method creates a PresentationRequest object instance from configuration
-        /// </summary>
-        /// <param name="stateId"></param>
-        /// <param name="credentialType"></param>
-        /// <param name="acceptedIssuers"></param>
-        /// <returns></returns>
         private PresentationRequest CreatePresentationRequest(string stateId = null, string credentialType = null)
         {
             PresentationRequest request = new()
