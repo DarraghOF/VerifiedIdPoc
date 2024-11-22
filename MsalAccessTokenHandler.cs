@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
-using Microsoft.Identity.Web;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using System;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Client;
+using Microsoft.Identity.Web;
 
 namespace AspNetCoreVerifiableCredentials
 {
