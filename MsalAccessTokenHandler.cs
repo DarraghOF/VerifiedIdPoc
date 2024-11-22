@@ -15,10 +15,10 @@ namespace AspNetCoreVerifiableCredentials
         {
             if (string.IsNullOrWhiteSpace(certificateName))
             {
-                throw new ArgumentException("certificateName should not be empty. Please set the CertificateName setting in the appsettings.json", "certificateName");
+                throw new ArgumentException("certificateName should not be empty. Please set the CertificateName setting in the appsettings.json", nameof(certificateName));
             }
             CertificateDescription certificateDescription = CertificateDescription.FromStoreWithDistinguishedName(certificateName);
-            DefaultCertificateLoader defaultCertificateLoader = new DefaultCertificateLoader();
+            DefaultCertificateLoader defaultCertificateLoader = new();
             defaultCertificateLoader.LoadIfNeeded(certificateDescription);
             return certificateDescription.Certificate;
         }
@@ -58,7 +58,7 @@ namespace AspNetCoreVerifiableCredentials
             // With client credentials flows the scopes is ALWAYS of the shape "resource/.default", as the 
             // application permissions need to be set statically (in the portal or by PowerShell), and then granted by
             // a tenant administrator. 
-            string[] scopes = new string[] { configuration["VerifiedID:scope"] };
+            string[] scopes = [configuration["VerifiedID:scope"]];
 
             AuthenticationResult result = null;
             try

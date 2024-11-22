@@ -335,5 +335,5 @@ namespace AspNetCoreVerifiableCredentials
             }
             return request;
         }
-    } // cls
-} // ns
+    }
+}

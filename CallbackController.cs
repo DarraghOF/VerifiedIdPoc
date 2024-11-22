@@ -35,7 +35,8 @@ namespace AspNetCoreVerifiableCredentials
 
         private readonly JsonSerializerOptions options = new()
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
         private async Task<ActionResult> HandleRequestCallback(RequestType requestType, string body)
@@ -50,7 +51,7 @@ namespace AspNetCoreVerifiableCredentials
                 }
                 if (body == null)
                 {
-                    body = await new System.IO.StreamReader(this.Request.Body).ReadToEndAsync();
+                    body = await new StreamReader(this.Request.Body).ReadToEndAsync();
                     _log.LogTrace(body);
                 }
 
@@ -60,7 +61,7 @@ namespace AspNetCoreVerifiableCredentials
                 List<string> issuanceStatus = ["request_retrieved", "issuance_successful", "issuance_error"];
                 List<string> selfieStatus = ["selfie_taken"];
 
-                CallbackEvent callback = JsonSerializer.Deserialize<CallbackEvent>(body);
+                CallbackEvent callback = JsonSerializer.Deserialize<CallbackEvent>(body, options);
 
                 if ((requestType == RequestType.Presentation && presentationStatus.Contains(callback.RequestStatus))
                     || (requestType == RequestType.Issuance && issuanceStatus.Contains(callback.RequestStatus))
@@ -101,14 +102,6 @@ namespace AspNetCoreVerifiableCredentials
             {
                 return BadRequest(new { error = "400", error_description = ex.Message });
             }
-        }
-
-        [AllowAnonymous]
-        [HttpPost("/api/issuer/issuecallback")]
-        public async Task<ActionResult> IssuanceCallback()
-        {
-            _log.LogTrace(this.Request.GetDisplayUrl());
-            return await HandleRequestCallback(RequestType.Issuance, null);
         }
 
         [AllowAnonymous]
@@ -173,7 +166,7 @@ namespace AspNetCoreVerifiableCredentials
                         };
                         break;
                     case "issuance_error":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString());
+                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
                         result = new JsonObject
                         {
                             ["status"] = requestStatus,
@@ -188,7 +181,7 @@ namespace AspNetCoreVerifiableCredentials
                         };
                         break;
                     case "presentation_error":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString());
+                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
                         result = new JsonObject
                         {
                             ["status"] = requestStatus,
@@ -196,7 +189,7 @@ namespace AspNetCoreVerifiableCredentials
                         };
                         break;
                     case "presentation_verified":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString());
+                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
                         JsonObject resp = JsonNode.Parse(JsonSerializer.Serialize(new
                         {
                             status = requestStatus,
@@ -217,7 +210,7 @@ namespace AspNetCoreVerifiableCredentials
                         result = resp;
                         break;
                     case "selfie_taken":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString());
+                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
                         result = new JsonObject
                         {
                             ["status"] = requestStatus,
@@ -245,37 +238,6 @@ namespace AspNetCoreVerifiableCredentials
                 rc = false;
             }
             return rc;
-        }
-
-        [AllowAnonymous]
-        [HttpPost("/api/issuer/selfie/{id}")]
-        public async Task<ActionResult> SetSelfie(string id)
-        {
-            _log.LogTrace(this.Request.GetDisplayUrl());
-            try
-            {
-                string body = await new StreamReader(this.Request.Body).ReadToEndAsync();
-                _log.LogTrace(body);
-                string dataImage = "data:image/jpeg;base64,";
-                int idx = body.IndexOf(";base64,");
-                if (idx == -1)
-                {
-                    return BadRequest(new { error = "400", error_description = $"Image must be {dataImage}" });
-                }
-                string photo = body[(idx + 8)..];
-                CallbackEvent callback = new()
-                {
-                    RequestId = id,
-                    State = id,
-                    RequestStatus = "selfie_taken",
-                    Photo = photo
-                };
-                return await HandleRequestCallback(RequestType.Selfie, JsonSerializer.Serialize(callback));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = "400", error_description = ex.Message });
-            }
         }
     }
 }
