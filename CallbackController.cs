@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -24,14 +23,11 @@ namespace AspNetCoreVerifiableCredentials
         {
             Unknown,
             Presentation,
-            Issuance,
-            Selfie
         };
 
         private readonly IConfiguration _configuration = configuration;
         private readonly IMemoryCache _cache = memoryCache;
         private readonly ILogger<CallbackController> _log = log;
-        private readonly string _apiKey = Environment.GetEnvironmentVariable("API-KEY");
 
         private readonly JsonSerializerOptions options = new()
         {
@@ -44,11 +40,6 @@ namespace AspNetCoreVerifiableCredentials
             try
             {
                 this.Request.Headers.TryGetValue("api-key", out var apiKey);
-                if (requestType != RequestType.Selfie && this._apiKey != apiKey)
-                {
-                    _log.LogTrace("api-key wrong or missing");
-                    return new ContentResult() { StatusCode = (int)HttpStatusCode.Unauthorized, Content = "api-key wrong or missing" };
-                }
                 if (body == null)
                 {
                     body = await new StreamReader(this.Request.Body).ReadToEndAsync();
@@ -58,14 +49,10 @@ namespace AspNetCoreVerifiableCredentials
                 bool rc = false;
                 string errorMessage = null;
                 List<string> presentationStatus = ["request_retrieved", "presentation_verified", "presentation_error"];
-                List<string> issuanceStatus = ["request_retrieved", "issuance_successful", "issuance_error"];
-                List<string> selfieStatus = ["selfie_taken"];
 
                 CallbackEvent callback = JsonSerializer.Deserialize<CallbackEvent>(body, options);
 
-                if ((requestType == RequestType.Presentation && presentationStatus.Contains(callback.RequestStatus))
-                    || (requestType == RequestType.Issuance && issuanceStatus.Contains(callback.RequestStatus))
-                    || (requestType == RequestType.Selfie && selfieStatus.Contains(callback.RequestStatus)))
+                if (requestType == RequestType.Presentation && presentationStatus.Contains(callback.RequestStatus))
                 {
                     if (!_cache.TryGetValue(callback.State, out string requestState))
                     {
@@ -83,8 +70,13 @@ namespace AspNetCoreVerifiableCredentials
                         {
                             reqState.Add("callback", body);
                         }
-                        _cache.Set(callback.State, JsonSerializer.Serialize(reqState)
-                            , DateTimeOffset.Now.AddSeconds(_configuration.GetValue<int>("AppSettings:CacheExpiresInSeconds", 300)));
+
+                        _cache.Set(
+                            callback.State,
+                            JsonSerializer.Serialize(reqState),
+                            DateTimeOffset.Now.AddSeconds(_configuration.GetValue<int>("AppSettings:CacheExpiresInSeconds",
+                            300)));
+
                         rc = true;
                     }
                 }

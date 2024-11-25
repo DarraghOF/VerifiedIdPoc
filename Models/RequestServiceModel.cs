@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -32,7 +29,6 @@ namespace AspNetCoreVerifiableCredentials.Models
 
         public bool ValidateLinkedDomain { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public FaceCheck FaceCheck { get; set; }
     }
 
@@ -63,13 +59,10 @@ namespace AspNetCoreVerifiableCredentials.Models
     {
         public string Type { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string> AcceptedIssuers { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public Configuration Configuration { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<Constraint> Constraints { get; set; }
 
     }
@@ -78,13 +71,10 @@ namespace AspNetCoreVerifiableCredentials.Models
     {
         public string ClaimName { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<string> Values { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string Contains { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string StartsWith { get; set; }
     }
 
@@ -103,7 +93,6 @@ namespace AspNetCoreVerifiableCredentials.Models
         public ClaimsIssuer[] VerifiedCredentialsData { get; set; }
 
         public string Photo { get; set; }
-
     }
 
     public class Error
