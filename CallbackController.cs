@@ -165,21 +165,6 @@ namespace AspNetCoreVerifiableCredentials
                             ["message"] = "QR code is scanned. Waiting for user action..."
                         };
                         break;
-                    case "issuance_error":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
-                        result = new JsonObject
-                        {
-                            ["status"] = requestStatus,
-                            ["message"] = "Issuance failed: " + callback.Error.Message
-                        };
-                        break;
-                    case "issuance_successful":
-                        result = new JsonObject
-                        {
-                            ["status"] = requestStatus,
-                            ["message"] = "Issuance successful"
-                        };
-                        break;
                     case "presentation_error":
                         callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
                         result = new JsonObject
@@ -208,15 +193,6 @@ namespace AspNetCoreVerifiableCredentials
                             resp.Add("issuanceDate", callback.VerifiedCredentialsData[0].IssuanceDate);
                         }
                         result = resp;
-                        break;
-                    case "selfie_taken":
-                        callback = JsonSerializer.Deserialize<CallbackEvent>(reqState["callback"].ToString(), options);
-                        result = new JsonObject
-                        {
-                            ["status"] = requestStatus,
-                            ["message"] = "Selfie taken",
-                            ["photo"] = callback.Photo
-                        };
                         break;
                     default:
                         result = new JsonObject

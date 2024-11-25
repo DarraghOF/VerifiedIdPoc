@@ -1,15 +1,10 @@
-function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, onPresentationVerified, onIssuanceSuccesful, onSelfieTaken, onError, pollFrequency) {
+function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, onPresentationVerified, onError, pollFrequency) {
     this.onDrawQRCode = onDrawQRCode;
     this.onNavigateToDeepLink = onNavigateToDeepLink;
     this.onRequestRetrieved = onRequestRetrieved;
     this.onPresentationVerified = onPresentationVerified;
-    this.onIssuanceSuccesful = onIssuanceSuccesful;
-    this.onSelfieTaken = onSelfieTaken;
     this.onError = onError;
     this.pollFrequency = (pollFrequency == undefined ? 1000 : pollFrequency);
-    this.apiCreateIssuanceRequest = '/api/issuer/issuance-request';
-    this.apiSetPhoto = '/api/issuer/userphoto';
-    this.apiCreateSelfieRequest = '/api/issuer/selfie-request';
     this.apiCreatePresentationRequest = '/api/verifier/presentation-request';
     this.apiPollPresentationRequest = '/api/request-status';
     this.logEnabled = false;
@@ -21,14 +16,14 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
     this.request = null;
     this.requestType = "";
     this.uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-            .replace(/[xy]/g, function (c) {
-                const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+        .replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
 
     // function to create a presentation request
     this.createRequest = async function (url) {
-        const response = await fetch(url, {method: 'GET', headers: { 'Accept': 'application/json', 'rsid': this.uuid } });
+        const response = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json', 'rsid': this.uuid } });
         const respJson = await response.json();
         console.log(respJson);
         if (respJson.error_description) {
@@ -49,14 +44,6 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
         this.requestType = "presentation";
         this.createRequest(this.apiCreatePresentationRequest)
     };
-    this.createIssuanceRequest = function () {
-        this.requestType = "issuance";
-        this.createRequest(this.apiCreateIssuanceRequest)
-    };
-    this.createSelfieRequest = function () {
-        this.requestType = "selfie";
-        this.createRequest(this.apiCreateSelfieRequest);
-    };
 
     // function to pull for presentation status
     this.pollRequestStatus = function (id) {
@@ -66,7 +53,7 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
             if ((tmNow - 10) > _rsThis.request.expiry) {
                 clearInterval(pollFlag);
                 _rsThis.log(`${(tmNow - 10)} > ${_rsThis.request.expiry}`);
-                _rsThis.onError( { error: "timeout", error_description: `The ${_rsThis.requestType} request was not process in time.` });
+                _rsThis.onError({ error: "timeout", error_description: `The ${_rsThis.requestType} request was not process in time.` });
                 return;
             }
             const response = await fetch(`${_rsThis.apiPollPresentationRequest}?id=${id}`);
@@ -85,17 +72,7 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
                     _rsThis.log(`onPresentationVerified( ${id}, ... )`);
                     _rsThis.onPresentationVerified(id, respMsg);
                 }
-                if (respMsg.status == 'issuance_successful') {
-                    clearInterval(pollFlag);
-                    _rsThis.log(`onIssuanceSuccesful( ${id}, ... )`);
-                    _rsThis.onIssuanceSuccesful(id, respMsg);
-                }
-                if (respMsg.status == 'selfie_taken') {
-                    clearInterval(pollFlag);
-                    _rsThis.log(`onSelfieTaken( ${id}, ... )`);
-                    _rsThis.onSelfieTaken(id, respMsg);
-                }
-                if (respMsg.status == 'presentation_error' || respMsg.status == 'issuance_error') {
+                if (respMsg.status == 'presentation_error') {
                     clearInterval(pollFlag);
                     _rsThis.log(`onError(...)`);
                     _rsThis.onError(this.requestType, respMsg);
@@ -105,12 +82,12 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
     }; // pollRequestStatus
 
     this.setUserPhoto = async function (base64Image) {
-        this.log('setUserPhoto(): ' + base64Image );
+        this.log('setUserPhoto(): ' + base64Image);
         const response = await fetch(this.apiSetPhoto, {
             headers: { 'Accept': 'application/json', 'Content-Type': 'image/jpeg', 'rsid': this.uuid },
-                                                         method: 'POST',
-                                                         body: base64Image
-                                                        });
+            method: 'POST',
+            body: base64Image
+        });
         const respJson = await response.json();
         this.log(respJson);
         if (respJson.error_description) {

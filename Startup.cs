@@ -31,9 +31,6 @@ namespace AspNetCoreVerifiableCredentials
                 // .WithOrigins("http://example.com","http://www.contoso.com");
             }));
 
-            //services.Configure<AppSettingsModel>(Configuration.GetSection("AppSettings"));
-
-
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -83,7 +80,7 @@ namespace AspNetCoreVerifiableCredentials
             });
 
             // generate an api-key on startup that we can use to validate callbacks
-            System.Environment.SetEnvironmentVariable("API-KEY", Guid.NewGuid().ToString());
+            Environment.SetEnvironmentVariable("API-KEY", Guid.NewGuid().ToString());
         }
     }
 }

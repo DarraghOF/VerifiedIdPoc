@@ -5,7 +5,7 @@
 }
 <div id="wrap">
     <div style="text-align: center;">
-        <img src="VerifiedCredentialExpert-icon.png" height=200px; />
+        <img src="VerifiedCredentialExpert-icon.png" height="200" />
         <h1 id="vcType">VerifiedEmployee Presentation</h1>
 
 
@@ -16,8 +16,10 @@
 
             <table id="claims">
                 <thead>
-                <th style="width:25%">Claims</th>
-                <th>Value</th>
+                    <tr>
+                        <th style="width:25%">Claims</th>
+                        <th>Value</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -27,8 +29,10 @@
 
             <table id="vcinfo">
                 <thead>
-                <th style="width:25%">VC Details</th>
-                <th>Value</th>
+                    <tr>
+                        <th style="width:25%">VC Details</th>
+                        <th>Value</th>
+                    </tr>
                 </thead>
                 <tbody>
                 </tbody>
@@ -101,6 +105,7 @@
                     }
                 }
             }
+
             function getPresentationResult(requestId) {
                 fetch(`${requestService.apiPollPresentationRequest}?id=${requestId}`)
                     .then(response => response.text())
@@ -118,7 +123,6 @@
                         }
                     })
             }
-
 
             function parseParms(str) {
                 var pieces = str.split("&"), data = {}, i, parts;

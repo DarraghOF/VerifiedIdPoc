@@ -48,7 +48,7 @@ namespace AspNetCoreVerifiableCredentials
             _log.LogTrace(this.Request.GetDisplayUrl());
             try
             {
-                // The VC Request API is an authenticated API. We need to clientid and secret (or certificate) to create an access token which 
+                // The VC Request API is an authenticated API. We need to clientid and secret (or certificate) to create an access token which
                 // needs to be sent as bearer to the VC Request API
                 var (token, error, error_description) = await MsalAccessTokenHandler.GetAccessToken(_configuration);
                 if (string.IsNullOrEmpty(token))
@@ -60,12 +60,11 @@ namespace AspNetCoreVerifiableCredentials
                 string url = $"{_configuration["VerifiedID:ApiEndpoint"]}createPresentationRequest";
                 PresentationRequest request = CreatePresentationRequest();
                 string faceCheck = this.Request.Query["faceCheck"];
-                bool useFaceCheck = (!string.IsNullOrWhiteSpace(faceCheck) && (faceCheck == "1" || faceCheck == "true"));
+                bool useFaceCheck = !string.IsNullOrWhiteSpace(faceCheck) && (faceCheck == "1" || faceCheck == "true");
                 if (!HasFaceCheck(request) && (useFaceCheck || _configuration.GetValue("VerifiedID:useFaceCheck", false)))
                 {
-                    AddFaceCheck(request, null, this.Request.Query["photoClaimName"]);
+                    AddFaceCheck(request, null);
                 }
-                AddClaimsConstrains(request);
 
                 string jsonString = JsonSerializer.Serialize(request, options);
 
@@ -106,30 +105,6 @@ namespace AspNetCoreVerifiableCredentials
             {
                 _log.LogError("Exception: " + ex.Message);
                 return BadRequest(new { error = "400", error_description = "Exception: " + ex.Message });
-            }
-        }
-
-        [AllowAnonymous]
-        [HttpGet("/api/verifier/get-presentation-details")]
-        public ActionResult GetPresentationDetails()
-        {
-            _log.LogTrace(this.Request.GetDisplayUrl());
-            try
-            {
-                PresentationRequest request = CreatePresentationRequest();
-                var details = new
-                {
-                    clientName = request.Registration.ClientName,
-                    purpose = request.Registration.Purpose,
-                    VerifierAuthority = request.Authority,
-                    type = request.RequestedCredentials[0].Type,
-                    PhotoClaimName = _configuration.GetValue("VerifiedID:PhotoClaimName", "")
-                };
-                return new ContentResult { ContentType = "application/json", Content = JsonSerializer.Serialize(details) };
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = "400", error_description = ex.Message });
             }
         }
 
@@ -180,9 +155,9 @@ namespace AspNetCoreVerifiableCredentials
         }
 
         private static PresentationRequest AddRequestedCredential(
-            PresentationRequest request, 
+            PresentationRequest request,
             string credentialType,
-            bool allowRevoked = false, 
+            bool allowRevoked = false,
             bool validateLinkedDomain = true)
         {
             request.RequestedCredentials.Add(new RequestedCredential()
@@ -228,71 +203,6 @@ namespace AspNetCoreVerifiableCredentials
                 }
             }
             return false;
-        }
-
-        private PresentationRequest AddClaimsConstrains(PresentationRequest request)
-        {
-            // This illustrates who you can set constraints of claims in requested credential.
-            // The example just sets one constraint, but you can set multiple. If you set
-            // multiple, all constraints must evaluate to true (AND logic)
-            string constraintClaim = this.Request.Query["claim"];
-            if (string.IsNullOrWhiteSpace(constraintClaim))
-            {
-                return request;
-            }
-            string constraintOp = this.Request.Query["op"];
-            string constraintValue = this.Request.Query["value"];
-
-            Constraint constraint = null;
-            if (constraintOp == "value")
-            {
-                constraint = new Constraint()
-                {
-                    ClaimName = constraintClaim,
-                    Values = [constraintValue]
-                };
-            }
-            if (constraintOp == "contains")
-            {
-                constraint = new Constraint()
-                {
-                    ClaimName = constraintClaim,
-                    Contains = constraintValue
-                };
-            }
-            if (constraintOp == "startsWith")
-            {
-                constraint = new Constraint()
-                {
-                    ClaimName = constraintClaim,
-                    StartsWith = constraintValue
-                };
-            }
-            if (null != constraint)
-            {
-                // if request was created from template, constraint may already exist - update it if so
-                if (null != request.RequestedCredentials[0].Constraints)
-                {
-                    bool found = false;
-                    for (int i = 0; i < request.RequestedCredentials[0].Constraints.Count; i++)
-                    {
-                        if (request.RequestedCredentials[0].Constraints[i].ClaimName == constraintClaim)
-                        {
-                            request.RequestedCredentials[0].Constraints[i] = constraint;
-                            found = true;
-                        }
-                    }
-                    if (!found)
-                    {
-                        request.RequestedCredentials[0].Constraints.Add(constraint);
-                    }
-                }
-                else
-                {
-                    request.RequestedCredentials[0].Constraints = [constraint];
-                }
-            }
-            return request;
         }
     }
 }
