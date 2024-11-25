@@ -21,7 +21,6 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
             return v.toString(16);
         });
 
-    // function to create a presentation request
     this.createRequest = async function (url) {
         const response = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json', 'rsid': this.uuid } });
         const respJson = await response.json();
@@ -40,12 +39,12 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
             }
         }
     };
+
     this.createPresentationRequest = function () {
         this.requestType = "presentation";
         this.createRequest(this.apiCreatePresentationRequest)
     };
 
-    // function to pull for presentation status
     this.pollRequestStatus = function (id) {
         var _rsThis = this;
         var pollFlag = setInterval(async function () {
@@ -79,23 +78,5 @@ function RequestService(onDrawQRCode, onNavigateToDeepLink, onRequestRetrieved, 
                 }
             }
         }, this.pollFrequency);
-    }; // pollRequestStatus
-
-    this.setUserPhoto = async function (base64Image) {
-        this.log('setUserPhoto(): ' + base64Image);
-        const response = await fetch(this.apiSetPhoto, {
-            headers: { 'Accept': 'application/json', 'Content-Type': 'image/jpeg', 'rsid': this.uuid },
-            method: 'POST',
-            body: base64Image
-        });
-        const respJson = await response.json();
-        this.log(respJson);
-        if (respJson.error_description) {
-            this.onError(this.requestType, respJson.error_description);
-            return -1;
-        } else {
-            return respJson.id;
-        }
     };
-
-} // RequestService
+}
