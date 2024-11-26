@@ -74,8 +74,7 @@ namespace AspNetCoreVerifiableCredentials
                         _cache.Set(
                             callback.State,
                             JsonSerializer.Serialize(reqState),
-                            DateTimeOffset.Now.AddSeconds(_configuration.GetValue<int>("AppSettings:CacheExpiresInSeconds",
-                            300)));
+                            DateTimeOffset.Now.AddSeconds(_configuration.GetValue<int>("AppSettings:CacheExpiresInSeconds", 300)));
 
                         rc = true;
                     }

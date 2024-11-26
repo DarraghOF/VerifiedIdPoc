@@ -89,7 +89,12 @@ namespace AspNetCoreVerifiableCredentials
                         message = "Waiting for QR code to be scanned",
                         expiry = requestConfig["expiry"].ToString()
                     };
-                    _cache.Set(request.Callback.State, JsonSerializer.Serialize(cacheData), DateTimeOffset.Now.AddSeconds(_configuration.GetValue("AppSettings:CacheExpiresInSeconds", 300)));
+
+                    _cache.Set(
+                        request.Callback.State, 
+                        JsonSerializer.Serialize(cacheData), 
+                        DateTimeOffset.Now.AddSeconds(_configuration.GetValue("AppSettings:CacheExpiresInSeconds", 300)));
+                    
                     // The response from the VC Request API call is returned to the caller (the UI). It contains the URI to the request which Authenticator can download after
                     // it has scanned the QR code. If the payload requested the VC Request service to create the QR code that is returned as well
                     // the JavaScript in the UI will use that QR code to display it on the screen to the user.
